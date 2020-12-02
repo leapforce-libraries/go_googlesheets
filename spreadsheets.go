@@ -2,6 +2,8 @@ package GoogleSheets
 
 import (
 	"fmt"
+
+	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
 type SpreadSheet struct {
@@ -13,15 +15,15 @@ type SpreadSheetProperties struct {
 	Title string `json:"title"`
 }
 
-func (gs *GoogleSheets) GetSpreadSheet(spreadSheetID string, includeGridData bool) (*SpreadSheet, error) {
+func (gs *GoogleSheets) GetSpreadSheet(spreadSheetID string, includeGridData bool) (*SpreadSheet, *errortools.Error) {
 	url := fmt.Sprintf("%s/spreadsheets/%s?includeGridData=%v", apiURL, spreadSheetID, includeGridData)
 	//fmt.Println(url)
 
 	spreadSheet := SpreadSheet{}
 
-	_, err := gs.Get(url, &spreadSheet)
-	if err != nil {
-		return nil, err
+	_, e := gs.Get(url, &spreadSheet)
+	if e != nil {
+		return nil, e
 	}
 
 	return &spreadSheet, nil

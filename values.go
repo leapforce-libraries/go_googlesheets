@@ -2,6 +2,8 @@ package GoogleSheets
 
 import (
 	"fmt"
+
+	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
 type Values struct {
@@ -14,7 +16,7 @@ type ValuesProperties struct {
 	Title string `json:"title"`
 }
 
-func (gs *GoogleSheets) GetValues(spreadSheetID string, sheetName string, firstColumn string, lastColumn string, majorDimension string) (*Values, error) {
+func (gs *GoogleSheets) GetValues(spreadSheetID string, sheetName string, firstColumn string, lastColumn string, majorDimension string) (*Values, *errortools.Error) {
 	batchRowSize := 100
 	batchCount := 0
 
@@ -29,9 +31,9 @@ func (gs *GoogleSheets) GetValues(spreadSheetID string, sheetName string, firstC
 
 		values_ := Values{}
 
-		_, err := gs.Get(url, &values_)
-		if err != nil {
-			return nil, err
+		_, e := gs.Get(url, &values_)
+		if e != nil {
+			return nil, e
 		}
 
 		if len(values_.Values) > 0 {
