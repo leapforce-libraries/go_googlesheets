@@ -5,6 +5,7 @@ import (
 
 	bigquerytools "github.com/leapforce-libraries/go_bigquerytools"
 	errortools "github.com/leapforce-libraries/go_errortools"
+	google "github.com/leapforce-libraries/go_google"
 	oauth2 "github.com/leapforce-libraries/go_oauth2"
 )
 
@@ -25,7 +26,7 @@ type GoogleSheets struct {
 
 // methods
 //
-func NewGoogleSheets(clientID string, clientSecret string, scope string, bigQuery *bigquerytools.BigQuery, isLive bool) *GoogleSheets {
+func NewGoogleSheets(clientID string, clientSecret string, scope string, bigQuery *bigquerytools.BigQuery) *GoogleSheets {
 	gd := GoogleSheets{}
 	config := oauth2.OAuth2Config{
 		ApiName:         apiName,
@@ -37,7 +38,7 @@ func NewGoogleSheets(clientID string, clientSecret string, scope string, bigQuer
 		TokenURL:        tokenURL,
 		TokenHTTPMethod: tokenHTTPMethod,
 	}
-	gd.oAuth2 = oauth2.NewOAuth(config, bigQuery, isLive)
+	gd.oAuth2 = oauth2.NewOAuth(config, bigQuery)
 	return &gd
 }
 
@@ -50,9 +51,13 @@ func (gd *GoogleSheets) InitToken() *errortools.Error {
 }
 
 func (gd *GoogleSheets) Get(url string, model interface{}) (*http.Response, *errortools.Error) {
-	_, res, e := gd.oAuth2.Get(url, model, nil)
+	err := google.ErrorResponse{}
+	_, res, e := gd.oAuth2.Get(url, model, &err)
 
 	if e != nil {
+		if err.Error.Message != "" {
+			e.SetMessage(err.Error.Message)
+		}
 		return nil, e
 	}
 
@@ -60,9 +65,13 @@ func (gd *GoogleSheets) Get(url string, model interface{}) (*http.Response, *err
 }
 
 func (gd *GoogleSheets) Patch(url string, model interface{}) (*http.Response, *errortools.Error) {
-	_, res, e := gd.oAuth2.Patch(url, nil, model, nil)
+	err := google.ErrorResponse{}
+	_, res, e := gd.oAuth2.Patch(url, nil, model, &err)
 
 	if e != nil {
+		if err.Error.Message != "" {
+			e.SetMessage(err.Error.Message)
+		}
 		return nil, e
 	}
 
