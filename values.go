@@ -31,7 +31,7 @@ func (gs *GoogleSheets) GetValues(spreadSheetID string, sheetName string, firstC
 
 		values_ := Values{}
 
-		_, e := gs.Get(url, &values_)
+		_, _, e := gs.Client.Get(url, &values_)
 		if e != nil {
 			return nil, e
 		}

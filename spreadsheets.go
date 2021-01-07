@@ -21,7 +21,7 @@ func (gs *GoogleSheets) GetSpreadSheet(spreadSheetID string, includeGridData boo
 
 	spreadSheet := SpreadSheet{}
 
-	_, e := gs.Get(url, &spreadSheet)
+	_, _, e := gs.Client.Get(url, &spreadSheet)
 	if e != nil {
 		return nil, e
 	}
