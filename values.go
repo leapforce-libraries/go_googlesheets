@@ -1,4 +1,4 @@
-package GoogleSheets
+package googlesheets
 
 import (
 	"fmt"
@@ -16,7 +16,7 @@ type ValuesProperties struct {
 	Title string `json:"title"`
 }
 
-func (gs *GoogleSheets) GetValues(spreadSheetID string, sheetName string, firstColumn string, lastColumn string, majorDimension string) (*Values, *errortools.Error) {
+func (service *Service) GetValues(spreadSheetID string, sheetName string, firstColumn string, lastColumn string, majorDimension string) (*Values, *errortools.Error) {
 	batchRowSize := 100
 	batchCount := 0
 
@@ -31,7 +31,7 @@ func (gs *GoogleSheets) GetValues(spreadSheetID string, sheetName string, firstC
 
 		values_ := Values{}
 
-		_, _, e := gs.Client.Get(url, &values_)
+		_, _, e := service.googleService.Get(url, &values_)
 		if e != nil {
 			return nil, e
 		}
