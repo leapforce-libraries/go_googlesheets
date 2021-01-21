@@ -68,17 +68,19 @@ func (service *Service) GetSpreadSheet(spreadSheetID string, includeGridData boo
 	return &spreadSheet, nil
 }
 
-func (service *Service) CreateSpreadSheet(spreadSheetID string, includeGridData bool) (*SpreadSheet, *errortools.Error) {
-	spreadSheet := SpreadSheet{}
+func (service *Service) CreateSpreadSheet(spreadSheet *SpreadSheet) *errortools.Error {
+	if spreadSheet == nil {
+		return nil
+	}
 
 	requestConfig := oauth2.RequestConfig{
-		URL:           service.url("spreadsheets"),
-		ResponseModel: &spreadSheet,
+		URL:       service.url("spreadsheets"),
+		BodyModel: *spreadSheet,
 	}
 	_, _, e := service.googleService.Post(&requestConfig)
 	if e != nil {
-		return nil, e
+		return e
 	}
 
-	return &spreadSheet, nil
+	return nil
 }
