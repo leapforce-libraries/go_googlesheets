@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
+	oauth2 "github.com/leapforce-libraries/go_oauth2"
 )
 
 type Values struct {
@@ -26,18 +27,19 @@ func (service *Service) GetValues(spreadSheetID string, sheetName string, firstC
 
 		aRange := fmt.Sprintf("%s!%s%v:%s%v", sheetName, firstColumn, batchCount*batchRowSize+1, lastColumn, (batchCount+1)*batchRowSize)
 
-		url := fmt.Sprintf("%s/spreadsheets/%s/values/%s?majorDimension=%s", apiURL, spreadSheetID, aRange, majorDimension)
-		//fmt.Println(url)
+		_values := Values{}
 
-		values_ := Values{}
-
-		_, _, e := service.googleService.Get(url, &values_)
+		requestConfig := oauth2.RequestConfig{
+			URL:           service.url(fmt.Sprintf("spreadsheets/%s/values/%s?majorDimension=%s", spreadSheetID, aRange, majorDimension)),
+			ResponseModel: &_values,
+		}
+		_, _, e := service.googleService.Get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		if len(values_.Values) > 0 {
-			values.Values = append(values.Values, values_.Values...)
+		if len(_values.Values) > 0 {
+			values.Values = append(values.Values, _values.Values...)
 			batchCount++
 		} else {
 			break
