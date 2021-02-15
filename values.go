@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
-	oauth2 "github.com/leapforce-libraries/go_oauth2"
+	go_http "github.com/leapforce-libraries/go_http"
 )
 
 type Values struct {
@@ -29,7 +29,7 @@ func (service *Service) GetValues(spreadSheetID string, sheetName string, firstC
 
 		_values := Values{}
 
-		requestConfig := oauth2.RequestConfig{
+		requestConfig := go_http.RequestConfig{
 			URL:           service.url(fmt.Sprintf("spreadsheets/%s/values/%s?majorDimension=%s", spreadSheetID, aRange, majorDimension)),
 			ResponseModel: &_values,
 		}

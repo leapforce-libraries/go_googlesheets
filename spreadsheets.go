@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
-	oauth2 "github.com/leapforce-libraries/go_oauth2"
+	go_http "github.com/leapforce-libraries/go_http"
 )
 
 type SpreadSheet struct {
@@ -56,7 +56,7 @@ type BigQueryTableSpec struct {
 func (service *Service) GetSpreadSheet(spreadSheetID string, includeGridData bool) (*SpreadSheet, *errortools.Error) {
 	spreadSheet := SpreadSheet{}
 
-	requestConfig := oauth2.RequestConfig{
+	requestConfig := go_http.RequestConfig{
 		URL:           service.url(fmt.Sprintf("spreadsheets/%s?includeGridData=%v", spreadSheetID, includeGridData)),
 		ResponseModel: &spreadSheet,
 	}
@@ -73,7 +73,7 @@ func (service *Service) CreateSpreadSheet(spreadSheet *SpreadSheet) *errortools.
 		return nil
 	}
 
-	requestConfig := oauth2.RequestConfig{
+	requestConfig := go_http.RequestConfig{
 		URL:       service.url("spreadsheets"),
 		BodyModel: *spreadSheet,
 	}
