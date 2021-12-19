@@ -2,6 +2,7 @@ package googlesheets
 
 import (
 	"fmt"
+	"net/http"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
 	go_http "github.com/leapforce-libraries/go_http"
@@ -57,10 +58,11 @@ func (service *Service) GetSpreadSheet(spreadSheetID string, includeGridData boo
 	spreadSheet := SpreadSheet{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodGet,
 		URL:           service.url(fmt.Sprintf("spreadsheets/%s?includeGridData=%v", spreadSheetID, includeGridData)),
 		ResponseModel: &spreadSheet,
 	}
-	_, _, e := service.googleService.Get(&requestConfig)
+	_, _, e := service.googleService.HTTPRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -74,10 +76,11 @@ func (service *Service) CreateSpreadSheet(spreadSheet *SpreadSheet) *errortools.
 	}
 
 	requestConfig := go_http.RequestConfig{
+		Method:    http.MethodPost,
 		URL:       service.url("spreadsheets"),
 		BodyModel: *spreadSheet,
 	}
-	_, _, e := service.googleService.Post(&requestConfig)
+	_, _, e := service.googleService.HTTPRequest(&requestConfig)
 	if e != nil {
 		return e
 	}
